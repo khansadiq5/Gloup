@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Marketplace\BookingController;
 use App\Http\Controllers\Marketplace\BookingManagementController;
 use App\Http\Controllers\Marketplace\SalonDiscoveryController;
+use App\Http\Controllers\Payment\WebhookController;
 use App\Http\Controllers\Tenant\BranchController;
 use App\Http\Controllers\Tenant\CalendarController;
 use App\Http\Controllers\Tenant\CustomerProfileController;
@@ -130,4 +131,12 @@ Route::middleware(['auth', 'tenant'])->prefix('app/{tenant}')->group(function ()
         Route::put('/redemptions/{redemption}/cancel', [LoyaltyController::class, 'cancelRedemption'])->name('redemptions.cancel');
         Route::put('/redemptions/{redemption}/refund', [LoyaltyController::class, 'refundRedemption'])->name('redemptions.refund');
     });
+});
+
+// Payment Webhooks (public, no auth)
+Route::prefix('webhooks')->name('webhooks.')->group(function () {
+    Route::post('/razorpay', [WebhookController::class, 'razorpay'])->name('razorpay');
+    Route::post('/cashfree', [WebhookController::class, 'cashfree'])->name('cashfree');
+    Route::post('/stripe', [WebhookController::class, 'stripe'])->name('stripe');
+    Route::post('/{gateway}', [WebhookController::class, 'generic'])->name('generic');
 });
