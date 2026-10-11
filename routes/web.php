@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AbuseMonitorController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\HealthCheckController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\TenantManagementController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Marketplace\BookingController;
@@ -139,4 +145,61 @@ Route::prefix('webhooks')->name('webhooks.')->group(function () {
     Route::post('/cashfree', [WebhookController::class, 'cashfree'])->name('cashfree');
     Route::post('/stripe', [WebhookController::class, 'stripe'])->name('stripe');
     Route::post('/{gateway}', [WebhookController::class, 'generic'])->name('generic');
+});
+
+// Admin Routes (Platform Super Admin only)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Health checks (no auth for liveness/readiness)
+    Route::get('/health/live', [HealthCheckController::class, 'live'])->name('health.live');
+    Route::get('/health/ready', [HealthCheckController::class, 'ready'])->name('health.ready');
+
+    // Admin dashboard & health (auth required)
+    Route::get('/health', [HealthCheckController::class, 'check'])->name('health.check');
+    Route::get('/health/metrics', [HealthCheckController::class, 'metrics'])->name('health.metrics');
+
+    Route::get('/dashboard', [AdminDashboardController::class, 'overview'])->name('dashboard.overview');
+    Route::get('/dashboard/health', [AdminDashboardController::class, 'health'])->name('dashboard.health');
+
+    // Tenant Management
+    Route::prefix('tenants')->name('tenants.')->group(function () {
+        Route::get('/', [TenantManagementController::class, 'index'])->name('index');
+        Route::get('/{tenant}', [TenantManagementController::class, 'show'])->name('show');
+        Route::put('/{tenant}/status', [TenantManagementController::class, 'updateStatus'])->name('status.update');
+        Route::put('/{tenant}/plan', [TenantManagementController::class, 'changePlan'])->name('plan.change');
+        Route::post('/{tenant}/cancel', [TenantManagementController::class, 'cancelSubscription'])->name('subscription.cancel');
+        Route::post('/{tenant}/trial', [TenantManagementController::class, 'extendTrial'])->name('trial.extend');
+        Route::get('/plans', [TenantManagementController::class, 'plans'])->name('plans');
+    });
+
+    // Reports
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/revenue', [ReportController::class, 'revenue'])->name('revenue');
+        Route::get('/appointments', [ReportController::class, 'appointments'])->name('appointments');
+        Route::get('/tenant-performance', [ReportController::class, 'tenantPerformance'])->name('tenant-performance');
+        Route::get('/service-utilization', [ReportController::class, 'serviceUtilization'])->name('service-utilization');
+        Route::get('/staff-performance', [ReportController::class, 'staffPerformance'])->name('staff-performance');
+        Route::post('/export', [ReportController::class, 'export'])->name('export');
+    });
+
+    // Audit Logs
+    Route::prefix('audit')->name('audit.')->group(function () {
+        Route::get('/', [AuditLogController::class, 'index'])->name('index');
+        Route::get('/stats', [AuditLogController::class, 'stats'])->name('stats');
+        Route::get('/appointment/{appointment}', [AuditLogController::class, 'appointment'])->name('appointment');
+        Route::post('/export', [AuditLogController::class, 'export'])->name('export');
+    });
+
+    // Abuse Monitoring
+    Route::prefix('abuse')->name('abuse.')->group(function () {
+        Route::get('/', [AbuseMonitorController::class, 'index'])->name('index');
+        Route::get('/rate-limits', [AbuseMonitorController::class, 'rateLimitConfig'])->name('rate-limits');
+    });
+
+    // Health Checks
+    Route::prefix('health')->name('health.')->group(function () {
+        Route::get('/live', [HealthCheckController::class, 'live'])->name('live');
+        Route::get('/ready', [HealthCheckController::class, 'ready'])->name('ready');
+        Route::get('/check', [HealthCheckController::class, 'check'])->name('check');
+        Route::get('/metrics', [HealthCheckController::class, 'metrics'])->name('metrics');
+    });
 });
