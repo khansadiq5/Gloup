@@ -17,6 +17,7 @@ class BranchService extends Model
         'service_id',
         'price_inr',
         'duration_minutes',
+        'buffer_minutes',
         'is_available',
     ];
 
@@ -25,6 +26,7 @@ class BranchService extends Model
         return [
             'price_inr' => 'integer',
             'duration_minutes' => 'integer',
+            'buffer_minutes' => 'integer',
             'is_available' => 'boolean',
         ];
     }

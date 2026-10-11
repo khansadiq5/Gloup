@@ -54,6 +54,7 @@ return new class extends Migration
             $table->foreignId('service_id')->constrained('services')->cascadeOnDelete();
             $table->unsignedInteger('price_inr')->nullable();
             $table->unsignedInteger('duration_minutes')->nullable();
+            $table->unsignedInteger('buffer_minutes')->nullable();
             $table->boolean('is_available')->default(true);
             $table->timestamps();
 

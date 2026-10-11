@@ -148,6 +148,7 @@ class ServiceController extends Controller
         $validated = $request->validate([
             'price_inr' => ['nullable', 'integer', 'min:0'],
             'duration_minutes' => ['nullable', 'integer', 'min:5'],
+            'buffer_minutes' => ['nullable', 'integer', 'min:0'],
             'is_available' => ['required', 'boolean'],
         ]);
 

@@ -105,6 +105,21 @@ class Service extends Model
         return $this->duration_minutes;
     }
 
+    public function getBufferForBranch(Branch|int $branch): int
+    {
+        $branchId = $branch instanceof Branch ? $branch->id : $branch;
+
+        $override = $this->branchOverrides()
+            ->where('branch_id', $branchId)
+            ->first();
+
+        if ($override && $override->buffer_minutes !== null) {
+            return $override->buffer_minutes;
+        }
+
+        return $this->buffer_minutes;
+    }
+
     public function isAvailableAtBranch(Branch|int $branch): bool
     {
         if (! $this->is_active) {
