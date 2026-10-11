@@ -9,6 +9,7 @@ use App\Http\Controllers\Tenant\BranchController;
 use App\Http\Controllers\Tenant\CalendarController;
 use App\Http\Controllers\Tenant\CustomerProfileController;
 use App\Http\Controllers\Tenant\DashboardController;
+use App\Http\Controllers\Tenant\LoyaltyController;
 use App\Http\Controllers\Tenant\ServiceController;
 use App\Http\Controllers\Tenant\StaffController;
 use App\Http\Controllers\Tenant\WalkInController;
@@ -114,4 +115,19 @@ Route::middleware(['auth', 'tenant'])->prefix('app/{tenant}')->group(function ()
     Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('tenant.staff.destroy');
     Route::post('/branches/{branch}/staff/{staff}/shifts', [StaffController::class, 'setShifts'])->name('tenant.branches.staff.shifts');
     Route::post('/staff/{staff}/time-off', [StaffController::class, 'addTimeOff'])->name('tenant.staff.time_off');
+
+    // Loyalty & Rewards
+    Route::prefix('loyalty')->name('tenant.loyalty.')->group(function () {
+        Route::get('/program', [LoyaltyController::class, 'getProgram'])->name('program');
+        Route::put('/program', [LoyaltyController::class, 'upsertProgram'])->name('program.upsert');
+        Route::get('/rewards', [LoyaltyController::class, 'getRewards'])->name('rewards');
+        Route::post('/rewards', [LoyaltyController::class, 'createReward'])->name('rewards.create');
+        Route::put('/rewards/{reward}', [LoyaltyController::class, 'updateReward'])->name('rewards.update');
+        Route::delete('/rewards/{reward}', [LoyaltyController::class, 'deleteReward'])->name('rewards.delete');
+        Route::get('/customer/{customerProfile}/progress', [LoyaltyController::class, 'getCustomerProgress'])->name('customer.progress');
+        Route::get('/customer/{customerProfile}/redemptions', [LoyaltyController::class, 'getCustomerRedemptions'])->name('customer.redemptions');
+        Route::post('/customer/{customerProfile}/redeem', [LoyaltyController::class, 'redeemReward'])->name('customer.redeem');
+        Route::put('/redemptions/{redemption}/cancel', [LoyaltyController::class, 'cancelRedemption'])->name('redemptions.cancel');
+        Route::put('/redemptions/{redemption}/refund', [LoyaltyController::class, 'refundRedemption'])->name('redemptions.refund');
+    });
 });
