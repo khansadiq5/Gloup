@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Enums\SubscriptionStatus;
 use App\Enums\TenantRole;
 use App\Enums\TenantStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class Tenant extends Model
@@ -57,6 +59,33 @@ class Tenant extends Model
     public function customerProfiles(): HasMany
     {
         return $this->hasMany(CustomerProfile::class);
+    }
+
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class);
+    }
+
+    public function activeBranches(): HasMany
+    {
+        return $this->branches()->where('is_active', true);
+    }
+
+    public function primaryBranch(): HasOne
+    {
+        return $this->hasOne(Branch::class)->where('is_primary', true);
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class)
+            ->where('status', SubscriptionStatus::ACTIVE)
+            ->latestOfMany();
     }
 
     public function owners(): BelongsToMany

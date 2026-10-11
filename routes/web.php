@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Tenant\BranchController;
 use App\Http\Controllers\Tenant\CustomerProfileController;
 use App\Http\Controllers\Tenant\TenantDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -36,4 +37,11 @@ Route::middleware(['auth', 'tenant'])->prefix('app/{tenant}')->group(function ()
     Route::get('/customers/{profile}', [CustomerProfileController::class, 'show'])->name('tenant.customers.show');
     Route::put('/customers/{profile}', [CustomerProfileController::class, 'update'])->name('tenant.customers.update');
     Route::delete('/customers/{profile}', [CustomerProfileController::class, 'destroy'])->name('tenant.customers.destroy');
+
+    // Tenant Branches (CRUD with Plan Entitlement Checks)
+    Route::get('/branches', [BranchController::class, 'index'])->name('tenant.branches.index');
+    Route::post('/branches', [BranchController::class, 'store'])->name('tenant.branches.store');
+    Route::get('/branches/{branch}', [BranchController::class, 'show'])->name('tenant.branches.show');
+    Route::put('/branches/{branch}', [BranchController::class, 'update'])->name('tenant.branches.update');
+    Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])->name('tenant.branches.destroy');
 });
