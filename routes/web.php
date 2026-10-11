@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Marketplace\BookingController;
+use App\Http\Controllers\Marketplace\BookingManagementController;
+use App\Http\Controllers\Marketplace\SalonDiscoveryController;
 use App\Http\Controllers\Tenant\BranchController;
 use App\Http\Controllers\Tenant\CustomerProfileController;
 use App\Http\Controllers\Tenant\ServiceController;
@@ -13,6 +16,35 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+// Public Salon Discovery
+Route::prefix('salons')->name('marketplace.')->group(function () {
+    Route::get('/', [SalonDiscoveryController::class, 'index'])->name('index');
+    Route::get('/{tenant:slug}', [SalonDiscoveryController::class, 'show'])->name('salon.show');
+
+    // API endpoints for AJAX
+    Route::get('/{tenant:slug}/slots', [SalonDiscoveryController::class, 'getAvailableSlots'])->name('slots');
+    Route::post('/{tenant:slug}/reserve', [SalonDiscoveryController::class, 'createReservation'])->name('reserve');
+});
+
+// Public Booking Flow
+Route::prefix('book/{tenant:slug}')->name('marketplace.booking.')->group(function () {
+    Route::get('/', [BookingController::class, 'show'])->name('show');
+    Route::post('/select-services', [BookingController::class, 'selectServices'])->name('select-services');
+    Route::post('/', [BookingController::class, 'store'])->name('store');
+});
+
+// Public Booking Management (Guest + Customer)
+Route::prefix('booking/{tenant:slug}/{appointment}')->name('marketplace.booking.')->group(function () {
+    Route::get('/confirmation', [BookingManagementController::class, 'confirmation'])->name('confirmation');
+    Route::get('/verify', [BookingManagementController::class, 'verify'])->name('verify');
+    Route::post('/verify', [BookingManagementController::class, 'verifyAccess'])->name('verify.access');
+    Route::get('/manage', [BookingManagementController::class, 'manage'])->name('manage');
+    Route::post('/cancel', [BookingManagementController::class, 'cancel'])->name('cancel');
+    Route::post('/reschedule', [BookingManagementController::class, 'reschedule'])->name('reschedule');
+    Route::get('/reschedule/slots', [BookingManagementController::class, 'getRescheduleSlots'])->name('reschedule.slots');
+    Route::post('/reschedule/reserve', [BookingManagementController::class, 'createRescheduleReservation'])->name('reschedule.reserve');
+});
 
 // Guest & Auth routes
 Route::middleware('guest')->group(function () {
