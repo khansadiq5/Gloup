@@ -362,7 +362,7 @@ Keep this tracker updated as work proceeds. Do not mark an item complete until i
 - [x] Phase 0 — Repository reconnaissance and architecture lock
 - [x] Phase 1 — Identity, tenant and membership foundation
 - [x] Phase 2 — Branches and subscription entitlements
-- [ ] Phase 3 — Salon profiles, services, staff and schedules
+- [x] Phase 3 — Salon profiles, services, staff and schedules
 - [ ] Phase 4 — Appointment availability and lifecycle
 - [ ] Phase 5 — Marketplace and customer booking
 - [ ] Phase 6 — Salon dashboard, calendar and walk-ins
