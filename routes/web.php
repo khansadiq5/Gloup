@@ -6,10 +6,12 @@ use App\Http\Controllers\Marketplace\BookingController;
 use App\Http\Controllers\Marketplace\BookingManagementController;
 use App\Http\Controllers\Marketplace\SalonDiscoveryController;
 use App\Http\Controllers\Tenant\BranchController;
+use App\Http\Controllers\Tenant\CalendarController;
 use App\Http\Controllers\Tenant\CustomerProfileController;
+use App\Http\Controllers\Tenant\DashboardController;
 use App\Http\Controllers\Tenant\ServiceController;
 use App\Http\Controllers\Tenant\StaffController;
-use App\Http\Controllers\Tenant\TenantDashboardController;
+use App\Http\Controllers\Tenant\WalkInController;
 use Illuminate\Support\Facades\Route;
 
 // Public Marketplace / Landing routes
@@ -62,8 +64,25 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 
 // Authenticated Tenant Protected Routes
 Route::middleware(['auth', 'tenant'])->prefix('app/{tenant}')->group(function () {
-    Route::get('/', [TenantDashboardController::class, 'show'])->name('tenant.dashboard');
-    Route::put('/', [TenantDashboardController::class, 'update'])->name('tenant.update');
+    // Dashboard with branch switcher
+    Route::get('/', [DashboardController::class, 'show'])->name('tenant.dashboard');
+    Route::put('/', [DashboardController::class, 'update'])->name('tenant.update');
+    Route::post('/branch/switch', [DashboardController::class, 'switchBranch'])->name('tenant.branch.switch');
+
+    // Calendar & Appointments
+    Route::prefix('calendar')->name('tenant.calendar.')->group(function () {
+        Route::get('/', [CalendarController::class, 'index'])->name('index');
+        Route::get('/list', [CalendarController::class, 'list'])->name('list');
+        Route::get('/appointments/{appointment}', [CalendarController::class, 'show'])->name('appointments.show');
+        Route::put('/appointments/{appointment}/status', [CalendarController::class, 'updateStatus'])->name('appointments.status');
+    });
+
+    // Walk-ins
+    Route::prefix('walkins')->name('tenant.walkins.')->group(function () {
+        Route::get('/create', [WalkInController::class, 'create'])->name('create');
+        Route::post('/', [WalkInController::class, 'store'])->name('store');
+        Route::post('/quick-complete', [WalkInController::class, 'quickComplete'])->name('quick-complete');
+    });
 
     // Tenant-isolated Customer Profiles (CRUD)
     Route::get('/customers', [CustomerProfileController::class, 'index'])->name('tenant.customers.index');
