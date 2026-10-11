@@ -88,6 +88,21 @@ class Tenant extends Model
             ->latestOfMany();
     }
 
+    public function serviceCategories(): HasMany
+    {
+        return $this->hasMany(ServiceCategory::class);
+    }
+
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class);
+    }
+
+    public function staff(): HasMany
+    {
+        return $this->hasMany(Staff::class);
+    }
+
     public function owners(): BelongsToMany
     {
         return $this->users()->wherePivot('role', TenantRole::OWNER->value);

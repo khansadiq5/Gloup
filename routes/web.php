@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Tenant\BranchController;
 use App\Http\Controllers\Tenant\CustomerProfileController;
+use App\Http\Controllers\Tenant\ServiceController;
+use App\Http\Controllers\Tenant\StaffController;
 use App\Http\Controllers\Tenant\TenantDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,4 +46,21 @@ Route::middleware(['auth', 'tenant'])->prefix('app/{tenant}')->group(function ()
     Route::get('/branches/{branch}', [BranchController::class, 'show'])->name('tenant.branches.show');
     Route::put('/branches/{branch}', [BranchController::class, 'update'])->name('tenant.branches.update');
     Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])->name('tenant.branches.destroy');
+
+    // Tenant Services & Pricing Overrides
+    Route::get('/services', [ServiceController::class, 'index'])->name('tenant.services.index');
+    Route::post('/services', [ServiceController::class, 'store'])->name('tenant.services.store');
+    Route::get('/services/{service}', [ServiceController::class, 'show'])->name('tenant.services.show');
+    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('tenant.services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('tenant.services.destroy');
+    Route::post('/branches/{branch}/services/{service}/override', [ServiceController::class, 'overrideForBranch'])->name('tenant.branches.services.override');
+
+    // Tenant Staff Profiles, Shifts & Time Off
+    Route::get('/staff', [StaffController::class, 'index'])->name('tenant.staff.index');
+    Route::post('/staff', [StaffController::class, 'store'])->name('tenant.staff.store');
+    Route::get('/staff/{staff}', [StaffController::class, 'show'])->name('tenant.staff.show');
+    Route::put('/staff/{staff}', [StaffController::class, 'update'])->name('tenant.staff.update');
+    Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('tenant.staff.destroy');
+    Route::post('/branches/{branch}/staff/{staff}/shifts', [StaffController::class, 'setShifts'])->name('tenant.branches.staff.shifts');
+    Route::post('/staff/{staff}/time-off', [StaffController::class, 'addTimeOff'])->name('tenant.staff.time_off');
 });
