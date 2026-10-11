@@ -360,7 +360,7 @@ Every AI implementation response should end with:
 Keep this tracker updated as work proceeds. Do not mark an item complete until its gate has passed.
 
 - [x] Phase 0 — Repository reconnaissance and architecture lock
-- [ ] Phase 1 — Identity, tenant and membership foundation
+- [x] Phase 1 — Identity, tenant and membership foundation
 - [ ] Phase 2 — Branches and subscription entitlements
 - [ ] Phase 3 — Salon profiles, services, staff and schedules
 - [ ] Phase 4 — Appointment availability and lifecycle
